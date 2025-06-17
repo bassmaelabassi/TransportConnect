@@ -1,0 +1,5 @@
+@tailwind utilities;
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom styles that do not require the base layer can go here */
