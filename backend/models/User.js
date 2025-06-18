@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['conducteur', 'expediteur', 'admin'], default: 'expediteur' },
   isVerified: { type: Boolean, default: false },
-  badgeVerifie: { type: Boolean, default: false }
+  badgeVerifie: { type: Boolean, default: false },
+  status: { type: String, enum: ['active', 'suspended'], default: 'active' }
 }, {
   timestamps: true,
 });
