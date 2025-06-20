@@ -103,3 +103,17 @@ exports.getMesDemandes = async (req, res) => {
   }
 };
 
+exports.getDemandesRecues = async (req, res) => {
+  try {
+    // Récupérer les trajets du conducteur
+    const trajets = await Trajet.find({ conducteur: req.user._id }).select('_id');
+    // Récupérer les demandes associées à ces trajets
+    const demandes = await Demande.find({ trajet: { $in: trajets.map(t => t._id) } })
+      .populate('expediteur', 'nom prenom email')
+      .populate('trajet');
+    res.json(demandes);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des demandes reçues' });
+  }
+};
+
