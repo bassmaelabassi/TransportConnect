@@ -73,16 +73,31 @@ exports.login = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Login error:', err);
+    const errorMessage = process.env.NODE_ENV === 'development' 
+      ? `Erreur serveur: ${err.message}`
+      : 'Erreur serveur.';
+    res.status(500).json({ message: errorMessage });
   }
 };
 
 exports.logout = async (req, res) => {
   try {
-    // Pour une déconnexion côté serveur, on peut simplement renvoyer un succès
-    // Le token sera invalidé côté client en le supprimant du localStorage
     res.json({ message: 'Déconnexion réussie' });
   } catch (err) {
     res.status(500).json({ message: 'Erreur lors de la déconnexion' });
+  }
+};
+
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error('Get current user error:', err);
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
