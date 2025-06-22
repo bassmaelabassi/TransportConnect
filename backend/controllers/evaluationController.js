@@ -1,37 +1,59 @@
 const Evaluation = require('../models/Evaluation');
 const User = require('../models/User');
+const Demande = require('../models/Demande');
+const Notification = require('../models/Notification');
+const mongoose = require('mongoose');
 
 exports.createEvaluation = async (req, res) => {
   try {
-    const { evaluateId, note, commentaire } = req.body;
+    const { demandeId, note, commentaire } = req.body;
     const evaluateurId = req.user._id;
 
-    if (evaluateurId.toString() === evaluateId) {
+    const demande = await Demande.findById(demandeId).populate('conducteur').populate('expediteur');
+    if (!demande) {
+      return res.status(404).json({ message: 'Demande non trouvée.' });
+    }
+
+    if (demande.statut !== 'livree') {
+      return res.status(400).json({ message: 'Vous ne pouvez évaluer qu\'une demande livrée.' });
+    }
+
+    const isExpediteur = demande.expediteur._id.toString() === evaluateurId.toString();
+    const isConducteur = demande.conducteur._id.toString() === evaluateurId.toString();
+
+    if (!isExpediteur && !isConducteur) {
+      return res.status(403).json({ message: 'Vous n\'êtes pas autorisé à évaluer cette demande.' });
+    }
+
+    const evalueId = isExpediteur ? demande.conducteur._id : demande.expediteur._id;
+
+    if (evaluateurId.toString() === evalueId.toString()) {
       return res.status(400).json({ message: 'Vous ne pouvez pas vous évaluer vous-même.' });
     }
 
-    const userEvalue = await User.findById(evaluateId);
-    if (!userEvalue) {
-      return res.status(404).json({ message: 'Utilisateur à évaluer non trouvé.' });
-    }
-
     const existingEvaluation = await Evaluation.findOne({
-      evaluateur: evaluateurId,
-      evalue: evaluateId
+      demande: demandeId,
+      evaluateur: evaluateurId
     });
 
     if (existingEvaluation) {
-      return res.status(400).json({ message: 'Vous avez déjà évalué cet utilisateur.' });
+      return res.status(400).json({ message: 'Vous avez déjà évalué cette transaction.' });
     }
 
     const evaluation = await Evaluation.create({
+      demande: demandeId,
       evaluateur: evaluateurId,
-      evalue: evaluateId,
+      evalue: evalueId,
       note,
       commentaire
     });
-
-    await evaluation.populate('evaluateur', 'nom prenom');
+    
+    await Notification.create({
+        user: evalueId,
+        message: `Vous avez reçu une nouvelle évaluation de ${req.user.prenom} ${req.user.nom}.`,
+        type: 'general',
+        link: '/evaluations'
+    });
 
     res.status(201).json(evaluation);
   } catch (err) {
@@ -60,7 +82,7 @@ exports.getAverageRating = async (req, res) => {
     const { userId } = req.params;
 
     const result = await Evaluation.aggregate([
-      { $match: { evalue: userId } },
+      { $match: { evalue: new mongoose.Types.ObjectId(userId) } },
       {
         $group: {
           _id: null,
@@ -149,10 +171,48 @@ exports.getAllEvaluations = async (req, res) => {
   }
 };
 
+exports.getDemandesAevaluer = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Utilisateur non authentifié." });
+    }
+
+    const demandesConcernees = await Demande.find({
+      statut: 'livree',
+      $or: [{ expediteur: userId }, { conducteur: userId }]
+    })
+      .populate('conducteur', 'nom prenom')
+      .populate('expediteur', 'nom prenom');
+
+    const evaluationsFaites = await Evaluation.find({ evaluateur: userId }).select('demande');
+    const demandesEvalueesIds = evaluationsFaites.map(ev => ev.demande.toString());
+
+    const demandesAevaluer = demandesConcernees.filter(
+      demande => !demandesEvalueesIds.includes(demande._id.toString())
+    );
+
+    res.json(demandesAevaluer);
+  } catch (err) {
+    console.error('Erreur détaillée dans getDemandesAevaluer:', err);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
+  }
+};
+
+
 exports.getEvaluationsRecues = async (req, res) => {
   try {
     const evaluations = await Evaluation.find({ evalue: req.user._id })
       .populate('evaluateur', 'nom prenom')
+      .populate({
+        path: 'demande',
+        select: 'trajet',
+        populate: {
+          path: 'trajet',
+          select: 'depart destination'
+        }
+      })
       .sort({ createdAt: -1 });
 
     res.json(evaluations);

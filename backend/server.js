@@ -4,7 +4,11 @@ const app = require('./app');
 const connectDB = require('./config/db');
 
 dotenv.config();
+
 connectDB();
 
-const PORT = process.env.PORT || 8200;
-app.listen(PORT);
+const PORT = process.env.PORT || 6100;
+
+app.listen(PORT, () => {
+  console.log(`✅ Serveur démarré sur http://localhost:${PORT}`);
+});

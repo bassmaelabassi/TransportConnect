@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const evaluationSchema = new mongoose.Schema({
+  demande: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Demande',
+    required: true
+  },
   evaluateur: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -19,14 +24,14 @@ const evaluationSchema = new mongoose.Schema({
   },
   commentaire: {
     type: String,
-    required: true,
-    minlength: 10,
+    trim: true,
     maxlength: 500
   }
 }, {
   timestamps: true
 });
 
-evaluationSchema.index({ evaluateur: 1, evalue: 1 }, { unique: true });
+// Un évaluateur ne peut laisser qu'une seule évaluation par demande.
+evaluationSchema.index({ demande: 1, evaluateur: 1 }, { unique: true });
 
 module.exports = mongoose.model('Evaluation', evaluationSchema);

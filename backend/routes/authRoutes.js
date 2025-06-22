@@ -17,6 +17,14 @@ router.post(
 );
 
 router.post('/login', login);
+router.put('/profile', authMiddleware, async (req, res) => {
+  try {
+    res.json({ message: 'Profil mis à jour (mock)', data: req.body })
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du profil', error: err.message })
+  }
+});
+
 router.post('/logout', logout);
 router.get('/me', authMiddleware, getCurrentUser);
 
