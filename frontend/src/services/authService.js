@@ -1,7 +1,7 @@
 import api from "./api"
 
 export const authService = {
-  // Connexion
+
   async login(credentials) {
     try {
       const response = await api.post("/auth/login", credentials)
@@ -11,7 +11,6 @@ export const authService = {
     }
   },
 
-  // Inscription
   async register(userData) {
     try {
       const response = await api.post("/auth/register", userData)
@@ -21,7 +20,6 @@ export const authService = {
     }
   },
 
-  // Obtenir l'utilisateur actuel
   async getCurrentUser() {
     try {
       const response = await api.get("/auth/me")
@@ -31,7 +29,6 @@ export const authService = {
     }
   },
 
-  // Mettre à jour le profil
   async updateProfile(profileData) {
     try {
       const response = await api.put("/auth/profile", profileData)
@@ -41,7 +38,6 @@ export const authService = {
     }
   },
 
-  // Changer le mot de passe
   async changePassword(passwordData) {
     try {
       const response = await api.put("/auth/change-password", passwordData)
@@ -50,47 +46,11 @@ export const authService = {
       throw error
     }
   },
-
-  // Mot de passe oublié
-  async forgotPassword(email) {
-    try {
-      const response = await api.post("/auth/forgot-password", { email })
-      return response
-    } catch (error) {
-      throw error
-    }
-  },
-
-  // Réinitialiser le mot de passe
-  async resetPassword(token, newPassword) {
-    try {
-      const response = await api.post("/auth/reset-password", {
-        token,
-        newPassword,
-      })
-      return response
-    } catch (error) {
-      throw error
-    }
-  },
-
-  // Vérifier l'email
-  async verifyEmail(token) {
-    try {
-      const response = await api.post("/auth/verify-email", { token })
-      return response
-    } catch (error) {
-      throw error
-    }
-  },
-
-  // Déconnexion
   async logout() {
     try {
       await api.post("/auth/logout")
       localStorage.removeItem("token")
     } catch (error) {
-      // Même en cas d'erreur, on supprime le token local
       localStorage.removeItem("token")
       throw error
     }
