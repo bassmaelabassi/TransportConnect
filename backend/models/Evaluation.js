@@ -30,8 +30,6 @@ const evaluationSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
-// Un évaluateur ne peut laisser qu'une seule évaluation par demande.
 evaluationSchema.index({ demande: 1, evaluateur: 1 }, { unique: true });
 
 module.exports = mongoose.model('Evaluation', evaluationSchema);

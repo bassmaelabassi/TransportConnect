@@ -1,4 +1,160 @@
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-cream: #f0ead2;
+  --color-sage: #dde5b6;
+  --color-olive: #adc178;
+  --color-taupe: #a98467;
+  --color-brown: #6c584c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  color: var(--color-brown);
+  line-height: 1.6;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-taupe);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brown);
+}
+
+/* Professional button styles */
+.btn-primary {
+  @apply bg-[#6c584c] text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-[#a98467] hover:shadow-lg transform hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply bg-[#adc178] text-[#6c584c] px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-[#dde5b6] hover:shadow-lg;
+}
+
+.btn-outline {
+  @apply border-2 border-[#6c584c] text-[#6c584c] px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-[#6c584c] hover:text-white;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6 transition-all duration-200 hover:shadow-xl;
+}
+
+.card-header {
+  @apply border-b border-gray-200 pb-4 mb-4;
+}
+
+/* Form styles */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#adc178] focus:border-transparent transition-all duration-200;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-[#6c584c] mb-2;
+}
+
+/* Professional gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #f0ead2 0%, #dde5b6 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #adc178 0%, #a98467 100%);
+}
+
+.gradient-dark {
+  background: linear-gradient(135deg, #6c584c 0%, #a98467 100%);
+}
+
+/* Status badges */
+.badge-success {
+  @apply px-3 py-1 bg-[#adc178] text-[#6c584c] text-xs font-medium rounded-full;
+}
+
+.badge-warning {
+  @apply px-3 py-1 bg-[#f0ead2] text-[#6c584c] text-xs font-medium rounded-full;
+}
+
+.badge-error {
+  @apply px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full;
+}
+
+.badge-info {
+  @apply px-3 py-1 bg-[#dde5b6] text-[#6c584c] text-xs font-medium rounded-full;
+}
+
+/* Loading animation */
+.loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-[#6c584c];
+}
+
+/* Professional table styles */
+.table-container {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden;
+}
+
+.table-header {
+  @apply bg-[#f0ead2] text-[#6c584c] font-semibold;
+}
+
+.table-row {
+  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150;
+}
+
+/* Navigation styles */
+.nav-link {
+  @apply text-[#6c584c] hover:text-[#a98467] transition-colors duration-200 font-medium;
+}
+
+.nav-link-active {
+  @apply text-[#a98467] font-semibold;
+}
+
+/* Professional section headers */
+.section-header {
+  @apply text-2xl font-bold text-[#6c584c] mb-6 pb-2 border-b-2 border-[#adc178];
+}
+
+.section-subheader {
+  @apply text-lg font-semibold text-[#6c584c] mb-4;
+}
+
+/* Responsive grid layouts */
+.grid-responsive {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Professional spacing */
+.section-padding {
+  @apply px-6 py-8;
+}
+
+.container-max {
+  @apply max-w-7xl mx-auto;
+}
 
 @custom-variant dark (&:where(.dark, .dark *));
 

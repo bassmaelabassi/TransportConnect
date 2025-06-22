@@ -107,9 +107,6 @@ const Login = () => {
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </div>
-          <div className="text-center">
-            <Link to="/forgot-password" className="text-sm text-[#adc178] hover:text-[#6c584c] underline">Mot de passe oublié ?</Link>
-          </div>
           <div className="border-t pt-4">
             <p className="text-xs text-[#a98467] text-center mb-2">Comptes de démonstration :</p>
             <div className="text-xs text-[#6c584c] space-y-1 text-center">

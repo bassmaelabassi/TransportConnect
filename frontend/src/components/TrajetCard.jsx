@@ -1,7 +1,7 @@
 import Rating from "./Rating"
 import { useAuth } from "../hooks/useAuth"
 
-const TrajetCard = ({ trajet, onDemandeClick, showActions = true, type = "disponible" }) => {
+const TrajetCard = ({ trajet, onDemandeClick, onDelete, onEdit, showActions = true, type = "disponible" }) => {
   const { user } = useAuth()
   const getStatusBadge = (status) => {
     const statusClasses = {
@@ -103,10 +103,16 @@ const TrajetCard = ({ trajet, onDemandeClick, showActions = true, type = "dispon
 
           {type === "mes-trajets" && (
             <div className="flex space-x-2">
-              <button className="bg-gray-100 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-200 text-sm">
+              <button 
+                onClick={onEdit}
+                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-200 text-sm"
+              >
                 Modifier
               </button>
-              <button className="bg-red-100 text-red-700 px-3 py-1 rounded-md hover:bg-red-200 text-sm">
+              <button 
+                onClick={onDelete}
+                className="bg-red-100 text-red-700 px-3 py-1 rounded-md hover:bg-red-200 text-sm"
+              >
                 Supprimer
               </button>
             </div>

@@ -19,7 +19,7 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['demande', 'acceptation', 'refus', 'evaluation', 'general'],
+    enum: ['demande', 'acceptation', 'refus', 'evaluation', 'general', 'admin'],
     default: 'general'
   },
   relatedDemande: {

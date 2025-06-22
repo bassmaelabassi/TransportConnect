@@ -224,7 +224,16 @@ exports.marquerCommeLivree = async (req, res) => {
       type: 'evaluation',
       relatedDemande: demande._id,
       link: `/evaluations`,
-      actions: [{ label: 'Évaluer', action: 'evaluate', url: `/evaluations` }]
+      actions: [{ label: 'Évaluer le conducteur', action: 'evaluate', url: `/evaluations` }]
+    });
+
+    await Notification.create({
+      user: demande.trajet.conducteur,
+      message: `Le colis de ${demande.expediteur.prenom} ${demande.expediteur.nom} a été marqué comme livré. Vous pouvez maintenant évaluer l'expéditeur.`,
+      type: 'evaluation',
+      relatedDemande: demande._id,
+      link: '/evaluations',
+      actions: [{ label: 'Évaluer l\'expéditeur', action: 'evaluate', url: '/evaluations' }]
     });
 
     res.json({ message: "Demande marquée comme livrée", demande });

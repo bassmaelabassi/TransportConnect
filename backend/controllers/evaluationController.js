@@ -9,23 +9,27 @@ exports.createEvaluation = async (req, res) => {
     const { demandeId, note, commentaire } = req.body;
     const evaluateurId = req.user._id;
 
-    const demande = await Demande.findById(demandeId).populate('conducteur').populate('expediteur');
-    if (!demande) {
-      return res.status(404).json({ message: 'Demande non trouvée.' });
+    const demande = await Demande.findById(demandeId).populate('trajet');
+
+    if (!demande || !demande.trajet) {
+      return res.status(404).json({ message: 'Demande ou trajet associé non trouvé.' });
     }
 
     if (demande.statut !== 'livree') {
       return res.status(400).json({ message: 'Vous ne pouvez évaluer qu\'une demande livrée.' });
     }
 
-    const isExpediteur = demande.expediteur._id.toString() === evaluateurId.toString();
-    const isConducteur = demande.conducteur._id.toString() === evaluateurId.toString();
+    const expediteurId = demande.expediteur;
+    const conducteurId = demande.trajet.conducteur;
+
+    const isExpediteur = expediteurId.toString() === evaluateurId.toString();
+    const isConducteur = conducteurId.toString() === evaluateurId.toString();
 
     if (!isExpediteur && !isConducteur) {
       return res.status(403).json({ message: 'Vous n\'êtes pas autorisé à évaluer cette demande.' });
     }
 
-    const evalueId = isExpediteur ? demande.conducteur._id : demande.expediteur._id;
+    const evalueId = isExpediteur ? conducteurId : expediteurId;
 
     if (evaluateurId.toString() === evalueId.toString()) {
       return res.status(400).json({ message: 'Vous ne pouvez pas vous évaluer vous-même.' });
@@ -179,11 +183,21 @@ exports.getDemandesAevaluer = async (req, res) => {
       return res.status(401).json({ message: "Utilisateur non authentifié." });
     }
 
+    const trajetsConducteur = await mongoose.model('Trajet').find({ conducteur: userId }).select('_id');
+    const trajetsIds = trajetsConducteur.map(t => t._id);
+
     const demandesConcernees = await Demande.find({
       statut: 'livree',
-      $or: [{ expediteur: userId }, { conducteur: userId }]
+      $or: [{ expediteur: userId }, { trajet: { $in: trajetsIds } }]
     })
-      .populate('conducteur', 'nom prenom')
+      .populate({
+        path: 'trajet',
+        select: 'depart destination conducteur',
+        populate: {
+          path: 'conducteur',
+          select: 'nom prenom'
+        }
+      })
       .populate('expediteur', 'nom prenom');
 
     const evaluationsFaites = await Evaluation.find({ evaluateur: userId }).select('demande');
@@ -199,7 +213,6 @@ exports.getDemandesAevaluer = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 };
-
 
 exports.getEvaluationsRecues = async (req, res) => {
   try {

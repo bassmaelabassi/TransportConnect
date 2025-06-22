@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   telephone: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['conducteur', 'expediteur', 'admin'], default: 'expediteur' },
-  isVerified: { type: Boolean, default: false },
   badgeVerifie: { type: Boolean, default: false },
   status: { type: String, enum: ['active', 'suspended'], default: 'active' }
 }, {

@@ -97,7 +97,7 @@ const MesTrajets = () => {
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
-                Mes Trajets ({trajets.length})
+                Mes Trajets ({trajets.filter((t) => t.statut !== "terminee").length})
               </button>
               <button
                 onClick={() => setActiveTab("demandes")}
@@ -124,117 +124,56 @@ const MesTrajets = () => {
         </div>
         {activeTab === "trajets" && (
           <div className="space-y-6">
-            {trajets.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                <p className="text-gray-500">Aucun trajet publié pour le moment</p>
-              </div>
-            ) : (
-              trajets.map((trajet) => (
-                <div key={trajet.id} className="bg-white rounded-lg shadow-md p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <h3 className="text-lg font-semibold">
-                          {trajet.depart} → {trajet.destination}
-                        </h3>
-                        {getStatusBadge(trajet.statut)}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
-                        <div>
-                          <span className="font-medium">Date:</span> {trajet.date}
-                        </div>
-                        <div>
-                          <span className="font-medium">Heure:</span> {trajet.heure}
-                        </div>
-                        <div>
-                          <span className="font-medium">Capacité:</span> {trajet.capacite}
-                        </div>
-                        <div>
-                          <span className="font-medium">Prix:</span>{" "}
-                          <span className="text-green-600 font-semibold">{trajet.prix}</span>
-                        </div>
-                      </div>
-
-                      {trajet.etapes && (
-                        <div className="text-sm text-gray-600 mb-2">
-                          <span className="font-medium">Étapes:</span> {trajet.etapes}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-sm text-gray-500 mb-2">
-                        {trajet.demandes || 0} demande{(trajet.demandes || 0) > 1 ? "s" : ""}
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200">
-                          Modifier
-                        </button>
-                        <button className="bg-red-100 text-red-700 px-3 py-1 rounded text-sm hover:bg-red-200">
-                          Supprimer
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
             {trajets.filter((t) => t.statut !== "terminee").length === 0 ? (
               <div className="bg-white rounded-lg shadow-md p-8 text-center">
                 <p className="text-gray-500">Aucun trajet actif pour le moment</p>
               </div>
             ) : (
-              trajets.filter((t) => t.statut !== "terminee").map((trajet) => (
-                <div key={trajet.id} className="bg-white rounded-lg shadow-md p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <h3 className="text-lg font-semibold">
-                          {trajet.depart} → {trajet.destination}
-                        </h3>
-                        {getStatusBadge(trajet.statut)}
+              trajets
+                .filter((t) => t.statut !== "terminee")
+                .map((trajet) => (
+                  <div key={trajet._id} className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="text-lg font-semibold">
+                            {trajet.depart} → {trajet.destination}
+                          </h3>
+                          {getStatusBadge(trajet.statut)}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
+                          <div>
+                            <span className="font-medium">Date:</span> {new Date(trajet.date).toLocaleDateString()}
+                          </div>
+                          <div>
+                            <span className="font-medium">Heure:</span> {trajet.heure}
+                          </div>
+                          <div>
+                            <span className="font-medium">Capacité:</span> {trajet.capacite} kg
+                          </div>
+                          <div>
+                            <span className="font-medium">Prix:</span>{" "}
+                            <span className="text-green-600 font-semibold">{trajet.prix} DH</span>
+                          </div>
+                        </div>
+
+                        {trajet.etapes && (
+                          <div className="text-sm text-gray-600 mb-2">
+                            <span className="font-medium">Étapes:</span> {trajet.etapes}
+                          </div>
+                        )}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
-                        <div>
-                          <span className="font-medium">Date:</span> {trajet.date}
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500 mb-2">
+                          {trajet.demandes?.length || 0} demande
+                          {(trajet.demandes?.length || 0) !== 1 ? "s" : ""}
                         </div>
-                        <div>
-                          <span className="font-medium">Heure:</span> {trajet.heure}
-                        </div>
-                        <div>
-                          <span className="font-medium">Capacité:</span> {trajet.capacite}
-                        </div>
-                        <div>
-                          <span className="font-medium">Prix:</span>{" "}
-                          <span className="text-green-600 font-semibold">{trajet.prix}</span>
-                        </div>
-                      </div>
-
-                      {trajet.etapes && (
-                        <div className="text-sm text-gray-600 mb-2">
-                          <span className="font-medium">Étapes:</span> {trajet.etapes}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-sm text-gray-500 mb-2">
-                        {trajet.demandes || 0} demande{(trajet.demandes || 0) > 1 ? "s" : ""}
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200">
-                          Modifier
-                        </button>
-                        <button className="bg-red-100 text-red-700 px-3 py-1 rounded text-sm hover:bg-red-200">
-                          Supprimer
-                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                ))
             )}
           </div>
         )}
@@ -247,7 +186,7 @@ const MesTrajets = () => {
               </div>
             ) : (
               demandes.map((demande) => (
-                <div key={demande.id} className="bg-white rounded-lg shadow-md p-6">
+                <div key={demande._id} className="bg-white rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
@@ -315,26 +254,15 @@ const MesTrajets = () => {
                       {demande.statut === "en-attente" && (
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleAcceptDemande(demande.id)}
+                            onClick={() => handleAcceptDemande(demande._id)}
                             className="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 flex items-center"
                           >
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
                             Accepter
                           </button>
                           <button
-                            onClick={() => handleRefuseDemande(demande.id, "Capacité insuffisante")}
+                            onClick={() => handleRefuseDemande(demande._id, "Capacité insuffisante")}
                             className="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700 flex items-center"
                           >
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
                             Refuser
                           </button>
                         </div>
@@ -391,14 +319,6 @@ const MesTrajets = () => {
                     <div className="text-right">
                       <div className="text-sm text-gray-500 mb-2">
                         {trajet.demandes || 0} demande{(trajet.demandes || 0) > 1 ? "s" : ""}
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200">
-                          Modifier
-                        </button>
-                        <button className="bg-red-100 text-red-700 px-3 py-1 rounded text-sm hover:bg-red-200">
-                          Supprimer
-                        </button>
                       </div>
                     </div>
                   </div>
