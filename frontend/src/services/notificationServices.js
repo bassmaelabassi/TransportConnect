@@ -34,5 +34,13 @@ export const notificationService = {
     } catch (error) {
       throw error
     }
+  },
+  async markAllAsRead() {
+    try {
+      const response = await api.put("/notifications/read");
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 }

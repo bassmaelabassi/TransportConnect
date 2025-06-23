@@ -7,7 +7,9 @@ exports.getStats = async (req, res) => {
   try {
     const nbAnnonces = await Trajet.countDocuments();
     const nbDemandes = await Demande.countDocuments();
-    const nbUtilisateurs = await User.countDocuments({ role: { $in: ['conducteur', 'expediteur'] } });
+    const nbUtilisateurs = await User.countDocuments();
+    const nbConducteurs = await User.countDocuments({ role: 'conducteur' });
+    const nbExpediteurs = await User.countDocuments({ role: 'expediteur' });
     const nbActifs = await User.countDocuments({ status: 'active' });
     const nbAccept = await Demande.countDocuments({ statut: 'acceptee' });
     const nbTotalDemandes = await Demande.countDocuments();
@@ -17,6 +19,8 @@ exports.getStats = async (req, res) => {
       nbAnnonces,
       nbDemandes,
       nbUtilisateurs,
+      nbConducteurs,
+      nbExpediteurs,
       nbActifs,
       tauxAccept: Math.round(tauxAccept * 10) / 10,
     });
@@ -43,7 +47,7 @@ exports.getRecentUsers = async (req, res) => {
     const users = await User.find({ role: { $in: ['conducteur', 'expediteur'] } })
       .sort({ createdAt: -1 })
       .limit(10)
-      .select('nom prenom email role status isVerified createdAt');
+      .select('nom prenom email role status badgeVerifie createdAt');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs récents' });
@@ -87,5 +91,19 @@ exports.updateAnnonce = async (req, res) => {
     res.json(annonce);
   } catch (err) {
     res.status(500).json({ message: 'Erreur lors de la modification' });
+  }
+};
+
+exports.getUsersByRole = async (req, res) => {
+  console.log("getUsersByRole called with role:", req.params.role);
+  try {
+    const { role } = req.params;
+    if (!['conducteur', 'expediteur'].includes(role)) {
+      return res.status(400).json({ message: 'Rôle invalide' });
+    }
+    const users = await User.find({ role }).select('nom prenom email status createdAt');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs' });
   }
 }; 

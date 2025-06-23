@@ -19,4 +19,8 @@ export const adminService = {
   async updateAnnonce(id, data) {
     return await api.patch(`/admin/annonce/${id}`, data);
   },
+  async getUsersByRole(role) {
+    const response = await api.get(`/admin/users/${role}`);
+    return response.data;
+  },
 }; 

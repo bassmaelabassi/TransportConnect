@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getStats, getRecentAnnonces, getRecentUsers, updateUserStatus, deleteAnnonce, updateAnnonce } = require('../controllers/adminController');
+const { getStats, getRecentAnnonces, getRecentUsers, updateUserStatus, deleteAnnonce, updateAnnonce, getUsersByRole } = require('../controllers/adminController');
 const protect = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
@@ -10,5 +10,6 @@ router.get('/recent-users', protect, roleMiddleware(['admin']), getRecentUsers);
 router.patch('/user/:id', protect, roleMiddleware(['admin']), updateUserStatus);
 router.delete('/annonce/:id', protect, roleMiddleware(['admin']), deleteAnnonce);
 router.patch('/annonce/:id', protect, roleMiddleware(['admin']), updateAnnonce);
+router.get('/users/:role', protect, roleMiddleware(['admin']), getUsersByRole);
 
 module.exports = router; 

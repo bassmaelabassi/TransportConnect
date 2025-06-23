@@ -49,8 +49,8 @@ const DashboardAdmin = () => {
 
         setStats({
           utilisateurs: statsRes.nbUtilisateurs,
-          conducteurs: statsRes.nbUtilisateurs ? statsRes.nbUtilisateurs - statsRes.nbActifs : 0,
-          expediteurs: statsRes.nbUtilisateurs ? statsRes.nbActifs : 0,
+          conducteurs: statsRes.nbConducteurs,
+          expediteurs: statsRes.nbExpediteurs,
           annonces: statsRes.nbAnnonces,
           demandes: statsRes.nbDemandes,
           tauxAcceptation: statsRes.tauxAccept,
@@ -206,7 +206,7 @@ const DashboardAdmin = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Expéditeurs</p>
                 <p className="text-2xl font-bold text-[#6c584c]">{stats.expediteurs}</p>
-                <p className="text-xs text-green-600">+5% ce mois</p>
+                <p className="text-xs text-orange-600">+5% ce mois</p>
               </div>
               <div className="p-3 bg-orange-100 rounded-full">
                 <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +214,7 @@ const DashboardAdmin = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H2v-2a3 3 0 015.356-1.857M9 20v-2m3-2v2m-3-2a3 3 0 01-3-3V8a3 3 0 013-3h6a3 3 0 013 3v7a3 3 0 01-3 3h-6z"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
                   />
                 </svg>
               </div>
@@ -382,12 +382,14 @@ const DashboardAdmin = () => {
                       )}
                     </td>
                     <td className="px-4 py-2 flex gap-1">
-                      <button
-                        onClick={() => handleUserAction(user._id, "validate")}
-                        className="btn-outline text-xs px-2 py-1 text-green-600 border-green-400 hover:bg-green-50"
-                      >
-                        Valider
-                      </button>
+                      {(!user.badgeVerifie || user.status !== "active") && (
+                        <button
+                          onClick={() => handleUserAction(user._id, "validate")}
+                          className="btn-outline text-xs px-2 py-1 text-green-600 border-green-400 hover:bg-green-50"
+                        >
+                          Valider
+                        </button>
+                      )}
                       <button
                         onClick={() => handleUserAction(user._id, "suspend")}
                         className="btn-outline text-xs px-2 py-1 text-red-600 border-red-400 hover:bg-red-50"

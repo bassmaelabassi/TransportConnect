@@ -62,6 +62,9 @@ exports.createEvaluation = async (req, res) => {
     res.status(201).json(evaluation);
   } catch (err) {
     console.error('Erreur lors de la création de l\'évaluation:', err);
+    if (err && err.stack) {
+      console.error('Stack:', err.stack);
+    }
     res.status(500).json({ message: 'Erreur serveur lors de la création de l\'évaluation.' });
   }
 };
